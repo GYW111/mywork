@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <ul></ul>
+    <script src="../mywork/jquery.js"></script>
+    <script>
+      let arr = [
+        {
+          link: "./左右列表1.html",
+          title: "左右列表",
+        },
+        {
+          link: "./增删改查.html",
+          title: "增删改查",
+        },
+        {
+          link: "./11.6tab标签.html",
+          title: "tab标签页",
+        },
+        {
+          link: "./11.3.html",
+          title: "留言板",
+        },
+      ];
+      $(function () {
+        render();
+      });
+      function render() {
+        let html = ``;
+        arr.forEach((item) => {
+          html += `<li><a href="${item.link}">${item.title}</a></li>`;
+        });
+        $("ul").html(html);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <script src="./jquery.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
+    crossorigin="anonymous"
+  />
+  <body>
+    <style>
+      body {
+        overflow: hidden;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        border: 1px dashed black;
+        width: 200px;
+        min-height: 300px;
+        float: left;
+      }
+      li {
+        width: 99%;
+        height: 40px;
+        border-bottom: 1px dashed #000;
+        line-height: 40px;
+      }
+      .add {
+        width: 97%;
+        height: 30px;
+        border: none;
+      }
+      input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        vertical-align: middle;
+      }
+      h3 {
+        display: inline;
+        line-height: 3px;
+        margin-left: 30px;
+      }
+      #right {
+        margin-left: 100px;
+      }
+      .btn {
+        position: absolute;
+        left: 115px;
+        top: 80px;
+      }
+      #left-btn {
+        margin-top: 60px;
+      }
+      #box {
+        position: relative;
+        width: 800px;
+        height: 100vh;
+        left: 30%;
+      }
+    </style>
+    <div id="box">
+      <ul id="left">
+        <li>
+          <input
+            type="text"
+            name=""
+            placeholder="请输入水果"
+            class="add"
+            id="left-add"
+          />
+        </li>
+        <li style="background-color: #ccc">
+          <input type="checkbox" id="left-check-all" />
+          <h3>水果</h3>
+        </li>
+        <ul id="left-list"></ul>
+      </ul>
+
+      <ul id="right">
+        <li>
+          <input
+            type="text"
+            placeholder="请输入蔬菜!"
+            id="right-add"
+            class="add"
+          />
+        </li>
+        <li style="background-color: #ccc">
+          <input type="checkbox" id="right-check-all" />
+          <h3>蔬菜</h3>
+        </li>
+        <ul id="right-list"></ul>
+      </ul>
+      <div class="btn">
+        <button id="left-btn" class="btn btn-outline-warning">←</button>
+        <button id="right-btn" class="btn btn-outline-warning">→</button>
+      </div>
+    </div>
+    <script>
+      let arrleft = [
+        {
+          id: 1,
+          name: "苹果",
+          status: true,
+        },
+      ];
+      let arrright = [
+        {
+          id: 2,
+          name: "青菜",
+          status: true,
+        },
+      ];
+      $(function () {
+        renderLeft();
+        renderRight();
+        //左边添加
+        $("#left-add").on("keydown", addLeftFun);
+        //右边添加
+        $("#right-add").on("keydown", addRightFun);
+        //左边全选
+        $("#left-check-all").change(leftCheckAllFun);
+        //右边全选事件
+        $("#right-check-all").change(rightCheckAllFun);
+        //左边复选框改变事件
+        $("#left-list li").on("change", leftChangeStatus);
+        //右边复选框改变事件
+        $("#right-list li").on("change", rightChangeStatus);
+        $("#left-btn").click(rightToLeft);
+        $("#right-btn").click(leftToRight);
+      });
+      //右边到左边
+      function rightToLeft() {
+        let rightTmp = arrright.filter((item) => {
+          return item.status;
+        });
+        arrleft = arrleft.concat(rightTmp);
+        arrright = arrright.filter((item) => {
+          return !item.status;
+        });
+        renderLeft();
+        renderRight();
+      }
+      function leftToRight() {
+        let leftTmp = arrleft.filter((item) => {
+          return item.status;
+        });
+        console.log(leftTmp);
+        arrright = arrright.concat(leftTmp);
+        arrleft = arrleft.filter((item) => {
+          return !item.status;
+        });
+        renderLeft();
+        renderRight();
+      }
+      //右边
+      function rightChangeStatus() {
+        let checked = $(this).find("input").prop("checked");
+        let index = $(this).data("index");
+        arrright[index].status = checked;
+        checkRightAllStatus();
+      }
+      function checkRightAllStatus() {
+        let checked = arrright.every((item) => {
+          return item.status;
+        });
+        $("#right-check-all").prop("checked", checked);
+      }
+      //左边复选框
+      function leftChangeStatus() {
+        let checked = $(this).find("input").prop("checked");
+        let index = $(this).data("index");
+        arrleft[index].status = checked;
+        checkLeftAllStatus();
+      }
+      function checkLeftAllStatus() {
+        let checked = arrleft.every((item) => {
+          return item.status;
+        });
+        $("#left-check-all").prop("checked", checked);
+      }
+      //右边添加
+      function addRightFun() {
+        if (event.key == "Enter") {
+          let obj = {
+            id: new Date().getTime(),
+            name: $("#right-add").val(),
+            status: false,
+          };
+          arrright.push(obj);
+          $("#right li").off("change", rightChangeStatus);
+          renderRight();
+          $("#right-add").val("");
+        }
+      }
+      //左边添加
+      function addLeftFun() {
+        if (event.key == "Enter") {
+          let obj = {
+            id: new Date().getTime(),
+            name: $("#left-add").val(),
+            status: false,
+          };
+          arrleft.push(obj);
+          $("#left-list li").off("change", leftChangeStatus);
+          renderLeft();
+          $("#left-add").val("");
+        }
+      }
+      //左边全选
+      function leftCheckAllFun() {
+        let checked = $(this).prop("checked");
+        arrleft.forEach((item) => {
+          item.status = checked;
+        });
+        renderLeft();
+      }
+      //右边全选
+      function rightCheckAllFun() {
+        let checked = $(this).prop("checked");
+        arrright.forEach((item) => {
+          item.status = checked;
+        });
+        renderRight();
+      }
+      //右边列表
+      function renderRight() {
+        let html = ``;
+        arrright.forEach((item, index) => {
+          html += `<li data-index='${index}'><input type="checkbox" ${
+            item.status ? "checked" : ""
+          } id="n${item.id}">
+            <lable for="n${item.id}">${item.name}</lable>
+            </li>`;
+        });
+        $("#right-list").html(html);
+        $("#right-list li").off("change", rightChangeStatus);
+      }
+      //左边列表
+      function renderLeft() {
+        let html = ``;
+        arrleft.forEach((item, index) => {
+          html += `<li data-index='${index}'><input type="checkbox" ${
+            item.status ? "checked" : ""
+          } id="n${item.id}">
+            <lable for="n${item.id}">${item.name}</lable>
+            </li>`;
+        });
+        $("#left-list").html(html);
+        $("#left-list li").on("change", leftChangeStatus);
+      }
+    </script>
+  </body>
+</html>
