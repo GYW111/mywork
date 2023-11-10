@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML页面示例</title>
+    <style>
+      /* 外部容器 */
+      .outer-container {
+        display: flex;
+        justify-content: center;
+        height: 100vh;
+      }
+      h2 {
+        text-align: center;
+      }
+      /* 内部容器 */
+      #container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      /* 添加按钮样式 */
+      .add-button,
+      button {
+        padding: 10px 20px;
+        width: 100px;
+        border-radius: 5%;
+        background-color: #2486b9;
+        color: white;
+        border: none;
+        cursor: pointer;
+        margin-bottom: 10px;
+      }
+
+      /* 表格样式 */
+      #centered-table {
+        min-width: 1000px;
+        text-align: center;
+        border-collapse: collapse;
+      }
+
+      #centered-table th,
+      #centered-table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+
+      #centered-table th {
+        background-color: #f2f2f2;
+      }
+      /* 弹窗遮罩样式 */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      .modal-content {
+        background-color: white;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+      }
+      /* 表单容器 */
+      .form-container {
+        width: 300px;
+        margin: 0 auto;
+      }
+
+      /* 表单标题 */
+      .form-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      /* 表单元素 */
+      .form-element {
+        margin-bottom: 10px;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      .form-select {
+        width: 100%;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      .form-checkbox-label {
+        display: inline-block;
+        margin-right: 10px;
+      }
+      /* 修改按钮样式 */
+      .modify-button {
+        width: 60px;
+        padding: 6px 0px; /* 调整按钮内边距 */
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px; /* 调整按钮字体大小 */
+      }
+
+      button:hover {
+        background-color: rgb(118, 186, 222);
+      }
+      .modal-dialog {
+        display: none;
+      }
+    </style>
+    <script src="./jquery.min.js"></script>
+  </head>
+  <body>
+    <div class="outer-container">
+      <div id="container">
+        <!-- 添加按钮 -->
+        <button class="add-button">添加</button>
+        <!-- 搜索：<input type="text" name="" id="search" /><button id="searchBtn">
+          搜索
+        </button> -->
+        <!-- 表格 -->
+        <table id="centered-table">
+          <thead>
+            <tr>
+              <th>茶叶ID</th>
+              <th>茶叶名称</th>
+              <th>茶叶类型</th>
+              <th>茶叶价格</th>
+              <th>茶叶库存</th>
+              <th>茶叶描述</th>
+              <th>创建时间</th>
+              <th>更新时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <!-- 添加表单的弹窗遮罩 -->
+      <div id="add-modal" class="modal">
+        <div class="modal-content">
+          <!-- 添加表单内容 -->
+          <div class="form-container">
+            <h2 class="form-title">添加茶叶</h2>
+
+            <div class="form-element">
+              <label for="name" class="form-label"
+                >茶业名称<input type="text" id="tea-name" class="form-input"
+              /></label>
+            </div>
+
+            <div class="form-element">
+              <label class="form-label">茶叶类型</label>
+              <input type="text" id="tea-type" class="form-input" />
+            </div>
+
+            <div class="form-element">
+              <label for="country" class="form-label">茶叶价格</label>
+              <input type="text" id="tea-price" class="form-input" />
+            </div>
+            <div class="form-element">
+              <label class="form-label">茶叶库存</label>
+              <input type="text" id="tea-stock" class="form-input" />
+            </div>
+            <div class="form-element">
+              <label class="form-label">茶叶描述</label>
+              <input type="text" id="tea-description" class="form-input" />
+            </div>
+            <button type="button" id="addbtn">点击添加</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="xiu-modal" class="modal">
+        <div class="modal-content">
+          <!-- 添加表单内容 -->
+          <div class="form-container">
+            <h2 class="form-title">修改</h2>
+
+            <div class="form-element">
+              <label for="name" class="form-label"
+                >茶业名称<input type="text" id="teas-name" class="form-input"
+              /></label>
+            </div>
+
+            <div class="form-element">
+              <label class="form-label">茶叶类型</label>
+              <input type="text" id="teas-type" class="form-input" />
+            </div>
+
+            <div class="form-element">
+              <label for="country" class="form-label">茶叶价格</label>
+              <input type="text" id="teas-price" class="form-input" />
+            </div>
+            <div class="form-element">
+              <label class="form-label">茶叶库存</label>
+              <input type="text" id="teas-stock" class="form-input" />
+            </div>
+            <div class="form-element">
+              <label class="form-label">茶叶描述</label>
+              <input type="text" id="teas-description" class="form-input" />
+            </div>
+            <button type="button" id="xiubtn">保存修改</button>
+            <button type="button" id="qxbtn">取消</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="xian-modal" class="modal">
+        <div class="modal-content">
+          <!-- 添加表单内容 -->
+          <div class="form-container">
+            <h2 class="form-title">茶叶</h2>
+
+            <div class="form-element">
+              <label for="name" class="form-label"
+                >茶业名称<input type="text" id="h-name" class="form-input"
+              /></label>
+            </div>
+
+            <div class="form-element">
+              <label class="form-label">茶叶类型</label>
+              <input type="text" id="h-type" class="form-input" />
+            </div>
+
+            <div class="form-element">
+              <label for="country" class="form-label">茶叶价格</label>
+              <input type="text" id="h-price" class="form-input" />
+            </div>
+            <div class="form-element">
+              <label class="form-label">茶叶库存</label>
+              <input type="text" id="h-stock" class="form-input" />
+            </div>
+            <div class="form-element">
+              <label class="form-label">茶叶描述</label>
+              <input type="text" id="h-description" class="form-input" />
+            </div>
+            <button type="button" id="gbbtn">关闭</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      var index;
+      $(function () {
+        //获取列表
+        getListFun();
+        //添加弹框
+        $(".add-button").click(addshowFun);
+        //添加
+        $("#addbtn").click(addteaFun);
+        //tbody事件
+        $("tbody").click(tbodyFun);
+        //保存修改
+        $("#xiubtn").click(baocunFun);
+        $("#qxbtn").click(qxFun);
+        $("#gbbtn").click(gbFun);
+      });
+      let putID;
+      function gbFun() {
+        $("#xian-modal").toggle();
+      }
+      function qxFun() {
+        $("#xiu-modal").hide();
+      }
+      //保存修改
+      function baocunFun() {
+        let updatedData = {
+          name: $("#teas-name").val(),
+          type: $("#teas-type").val(),
+          price: $("#teas-price").val(),
+          stock: $("#teas-stock").val(),
+          description: $("#teas-description").val(),
+        };
+        $.ajax({
+          url: "https://liu.zzgoodqc.cn/teas/" + putID,
+          type: "put",
+          data: updatedData,
+          dataType: "json",
+          success: function (data) {
+            getListFun();
+            $("#xiu-modal").toggle();
+          },
+        });
+      }
+      //操作
+      function tbodyFun() {
+        if (event.target.tagName === "BUTTON") {
+          if ($(event.target).html() === "删除") {
+            let delId = $(event.target).data("id");
+            $.ajax({
+              url: `https://liu.zzgoodqc.cn/teas/` + delId,
+              type: "delete",
+              dataType: "json",
+              contentType: "application/json",
+              success: function (data) {
+                getListFun();
+              },
+            });
+          }
+          if ($(event.target).html() === "修改") {
+            $("#xiu-modal").show();
+            putID = event.target.dataset.id;
+            $.ajax({
+              url: "https://liu.zzgoodqc.cn/teas/" + putID,
+              type: "get",
+              dataType: "json",
+              success: function (data) {
+                $("#teas-name").val(data.data.name);
+                $("#teas-type").val(data.data.type);
+                $("#teas-price").val(data.data.price);
+                $("#teas-stock").val(data.data.stock);
+                $("#teas-description").val(data.data.description);
+                getListFun();
+              },
+            });
+          }
+          if ($(event.target).html() === "获取单个") {
+            $("#xian-modal").toggle();
+            putID = event.target.dataset.id;
+            $.ajax({
+              url: "https://liu.zzgoodqc.cn/teas/" + putID,
+              type: "get",
+              dataType: "json",
+              success: function (data) {
+                $("#h-name").val(data.data.name);
+                $("#h-type").val(data.data.type);
+                $("#h-price").val(data.data.price);
+                $("#h-stock").val(data.data.stock);
+                $("#h-description").val(data.data.description);
+                getListFun();
+              },
+            });
+          }
+        }
+      }
+      //添加
+      function addteaFun() {
+        let obj = {
+          name: $("#tea-name").val(),
+          type: $("#tea-type").val(),
+          price: $("#tea-price").val(),
+          stock: $("#tea-stock").val(),
+          description: $("#tea-description").val(),
+        };
+        $.ajax({
+          url: "https://liu.zzgoodqc.cn/teas",
+          type: "post",
+          data: obj,
+          success: function (data) {
+            $("#add-modal").toggle();
+            getListFun();
+            $("#tea-name").val("");
+            $("#tea-type").val("");
+            $("#tea-price").val("");
+            $("#tea-stock").val("");
+            $("#tea-description").val("");
+          },
+        });
+      }
+      function addshowFun() {
+        $("#add-modal").show();
+      }
+      //渲染
+      function getListFun() {
+        $.ajax({
+          url: "https://liu.zzgoodqc.cn/teas",
+          type: "get",
+          dataType: "json",
+          success: function (data) {
+            var res = data;
+            let html = ``;
+            res.data.forEach((item, index) => {
+              html += `<tr>
+              <td>${item.id}</td>
+              <td>${item.name}</td>
+              <td>${item.type}</td>
+              <td>${item.price}</td>
+              <td>${item.stock}</td>
+              <td>${item.description}</td>
+              <td>${item.created_at}</td>
+              <td>${item.updated_at}</td>
+              <td>
+                <button data-id='${item.id}'>删除</button>
+                <button data-id='${item.id}'>修改</button>
+                <button data-id='${item.id}'>获取单个</button>
+              </td>
+            </tr>`;
+            });
+            $("tbody").html(html);
+          },
+        });
+      }
+    </script>
+  </body>
+</html>
